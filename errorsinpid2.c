@@ -1,45 +1,72 @@
 #include "shell.h"
 
-void help_env(void);
-void help_setenv(void);
-void help_unsetenv(void);
-void help_history(void);
+char *error_126(char **args);
+char *error_127(char **args);
 
 /**
- * help_env - Displays information on the shellby builtin command 'env'.
+ * error_126 - Creates an error message for permission denied failures.
+ * @args: An array of arguments passed to the command.
+ *
+ * Return: The error string.
  */
-void help_env(void)
+char *error_126(char **args)
 {
-	char *msg = "env: env\n\tPrints the current environment.\n";
+	char *error, *hist_str;
+	int len;
 
-	write(STDOUT_FILENO, msg, _strlen(msg));
+	hist_str = _itoa(hist);
+	if (!hist_str)
+		return (NULL);
+
+	len = _strlen(name) + _strlen(hist_str) + _strlen(args[0]) + 24;
+	error = malloc(sizeof(char) * (len + 1));
+	if (!error)
+	{
+		free(hist_str);
+		return (NULL);
+	}
+
+	_strcpy(error, name);
+	_strcat(error, ": ");
+	_strcat(error, hist_str);
+	_strcat(error, ": ");
+	_strcat(error, args[0]);
+	_strcat(error, ": Permission denied\n");
+
+	free(hist_str);
+	return (error);
 }
 
 /**
- * help_setenv - Displays information on the shellby builtin command 'setenv'.
+ * error_127 - Creates an error message for command not found failures.
+ * @args: An array of arguments passed to the command.
+ *
+ * Return: The error string.
  */
-void help_setenv(void)
+char *error_127(char **args)
 {
-	char *msg = "setenv: setenv [VARIABLE] [VALUE]\n\tInitializes a new";
+	char *error, *hist_str;
+	int len;
 
-	write(STDOUT_FILENO, msg, _strlen(msg));
-	msg = "environment variable, or modifies an existing one.\n\n";
-	write(STDOUT_FILENO, msg, _strlen(msg));
-	msg = "\tUpon failure, prints a message to stderr.\n";
-	write(STDOUT_FILENO, msg, _strlen(msg));
-}
+	hist_str = _itoa(hist);
+	if (!hist_str)
+		return (NULL);
 
-/**
- * help_unsetenv - Displays information on the shellby builtin command
- * 'unsetenv'.
- */
-void help_unsetenv(void)
-{
-	char *msg = "unsetenv: unsetenv [VARIABLE]\n\tRemoves an ";
+	len = _strlen(name) + _strlen(hist_str) + _strlen(args[0]) + 16;
+	error = malloc(sizeof(char) * (len + 1));
+	if (!error)
+	{
+		free(hist_str);
+		return (NULL);
+	}
 
-	write(STDOUT_FILENO, msg, _strlen(msg));
-	msg = "environmental variable.\n\n\tUpon failure, prints a ";
-	write(STDOUT_FILENO, msg, _strlen(msg));
-	msg = "message to stderr.\n";
-	write(STDOUT_FILENO, msg, _strlen(msg));
+	_strcpy(error, name);
+	_strcat(error, ": ");
+	_strcat(error, hist_str);
+	_strcat(error, ": ");
+	_strcat(error, args[0]);
+	_strcat(error, ": not found\n");
+
+	free(hist_str);
+	return (error);
 }
